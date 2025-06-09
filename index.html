@@ -208,44 +208,6 @@
                 flex-wrap: wrap;
             }
         }
-        /* Modal styles */
-        #api-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.45);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-        #api-modal > div {
-            background: #fff;
-            border-radius: 16px;
-            max-width: 400px;
-            width: 90vw;
-            padding: 28px 18px 18px 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-            position: relative;
-        }
-        #close-api-modal {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            font-size: 1.3em;
-            background: none;
-            border: none;
-            cursor: pointer;
-        }
-        #api-payload-preview {
-            background: #f7f7f7;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.98em;
-            overflow-x: auto;
-        }
     </style>
 </head>
 <body>
@@ -303,13 +265,6 @@
                 </div>
             </form>
         </div>
-        <!-- Modal Popup for API Preview (shows on submit) -->
-        <div id="api-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center;">
-            <div style="background:#fff;border-radius:16px;max-width:400px;width:90vw;padding:28px 18px 18px 18px;box-shadow:0 8px 32px rgba(0,0,0,0.18);position:relative;display:flex;flex-direction:column;align-items:center;">
-                <pre id="api-payload-preview" style="background:#f7f7f7;padding:12px;border-radius:8px;font-size:0.98em;overflow-x:auto;width:100%;margin-bottom:18px;"></pre>
-                <button id="close-api-modal" style="font-size:1.1em;background:#222;color:#fff;border:none;border-radius:6px;padding:7px 22px;cursor:pointer;">OK</button>
-            </div>
-        </div>
     </div>
     <script>
         // Dynamic placeholder for user-message based on selected action
@@ -334,38 +289,79 @@
         updatePlaceholder();
 
         // Clear radios and reset placeholder on form submit
-        document.getElementById('controls-form').addEventListener('submit', function(e) {
+        document.getElementById('controls-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const radios = document.querySelectorAll('input[name="action"]');
             const checked = document.querySelector('input[name="action"]:checked');
             const action = checked ? checked.value : null;
             const message = userMessage.value;
             const stats = getCurrentStats();
+            if (!action) {
+                alert('Please select an action.');
+                return;
+            }
+            // Build payload
             const payload = {
-                action: action || '(none selected)',
-                message: message || '',
+                action,
+                message,
                 stats
             };
-            apiPayloadPreview.textContent = JSON.stringify(payload, null, 2);
-            apiModal.style.display = 'flex';
-            // Clear radios and reset placeholder after popup closes
-            closeApiModal.onclick = function() {
-                apiModal.style.display = 'none';
-                radios.forEach(radio => radio.checked = false);
-                setTimeout(updatePlaceholder, 0);
-            };
-            apiModal.onclick = function(ev) {
-                if (ev.target === apiModal) {
-                    apiModal.style.display = 'none';
-                    radios.forEach(radio => radio.checked = false);
-                    setTimeout(updatePlaceholder, 0);
+            // Show loading in info area
+            setInfoMessage('Talking to your pet...');
+            try {
+                const response = await fetch('/api/gatchi', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.error) {
+                    setInfoMessage('Error: ' + data.error);
+                    return;
                 }
-            };
+                // Parse model response (should be JSON)
+                let result;
+                try {
+                    result = typeof data.choices?.[0]?.message?.content === 'string'
+                        ? JSON.parse(data.choices[0].message.content)
+                        : data;
+                } catch {
+                    setInfoMessage('Invalid response from server.');
+                    return;
+                }
+                // Update stats UI
+                updateStats(result);
+                setInfoMessage(result.message || '*your friend is here*');
+            } catch (err) {
+                setInfoMessage('Network error.');
+            }
+            // Clear radios and reset placeholder
+            radios.forEach(radio => radio.checked = false);
+            setTimeout(updatePlaceholder, 0);
         });
-        // Modal popup logic for API payload preview (shows on submit)
-        const apiModal = document.getElementById('api-modal');
-        const closeApiModal = document.getElementById('close-api-modal');
-        const apiPayloadPreview = document.getElementById('api-payload-preview');
+        // Helper to update stats UI
+        function updateStats(result) {
+            if (typeof result.food === 'number') {
+                document.getElementById('hunger-number').textContent = `(${result.food}%)`;
+                document.querySelector('.stat-fill.hunger').style.width = result.food + '%';
+            }
+            if (typeof result.energy === 'number') {
+                document.getElementById('energy-number').textContent = `(${result.energy}%)`;
+                document.querySelector('.stat-fill.energy').style.width = result.energy + '%';
+            }
+            if (typeof result.happiness === 'number') {
+                document.getElementById('happiness-number').textContent = `(${result.happiness}%)`;
+                document.querySelector('.stat-fill.happiness').style.width = result.happiness + '%';
+            }
+            if (typeof result.level === 'number') {
+                document.getElementById('level-number').textContent = `(${result.level})`;
+                document.querySelector('.stat-fill.level').style.width = Math.min(100, result.level * 20) + '%';
+            }
+        }
+        // Helper to set info message
+        function setInfoMessage(msg) {
+            const marquee = document.querySelector('.marquee');
+            marquee.textContent = msg;
+        }
         // Helper to get current stats from DOM
         function getCurrentStats() {
             function getPercent(id) {
