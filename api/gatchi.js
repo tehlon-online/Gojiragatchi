@@ -20,8 +20,8 @@ export default async function handler(req, res) {
   }
 
   // Read system instructions and game rules
-  const sysPath = path.join(process.cwd(), 'system_instructions.txt');
-  const rulesPath = path.join(process.cwd(), 'game_rules.txt');
+  const sysPath = path.join(process.cwd(), '../../system_instructions.txt');
+  const rulesPath = path.join(process.cwd(), '../../game_rules.txt');
   let systemInstructions = '';
   let gameRules = '';
   try {
