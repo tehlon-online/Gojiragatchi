@@ -1,0 +1,49 @@
+# Tamagotchi Game Rules
+
+> Always respond with a JSON object like:  
+> `{ "food": 80, "energy": 60, "happiness": 90, "level": 2, "message": "Gojiragatchi loved the apple!" }`  
+> Do not include any extra text, explanation, or formatting.
+
+## Stat Names
+- Food (0-100%)
+- Energy (0-100%)
+- Happiness (0-100%)
+- Level (integer, starts at 1)
+
+## Stat Change Logic
+- All actions and stat changes must keep stats between 0% and 100% (except Level, which is integer >=1).
+
+### Actions and Effects
+
+#### Eat
+- Change the Food by an amount between +20% and +40% (based on the current stats and user's message)
+- Change the Happiness by an amount between -5% and +30% (based on the current stats and user's message)
+- Change the Energy by an amount between -10% and +10% (based on the current stats and user's message)
+- Cannot increase Food above 100%
+
+#### Play
+- Change the Happiness by an amount between +15% and +30% (based on the current stats and user's message)
+- Change the Energy by an amount between -20% and -10% (based on the current stats and user's message)
+- Change the Food by an amount between -10% and -5% (based on the current stats and user's message)
+- Cannot increase Happiness above 100%
+
+#### Sleep
+- Change the Energy by an amount between +30% and +50% (based on the current stats and user's message)
+- Change the Food by -10% (based on the current stats and user's message)
+- Change the Happiness by an amount between -10% and +10% (based on the current stats and user's message)
+- Cannot increase Energy above 100%
+
+#### Train
+- Increase Level by 1 if Energy >= 50% and Food >= 40%
+- Change the Energy by -30% (based on the current stats and user's message)
+- Change the Food by -20% (based on the current stats and user's message)
+- Change the Happiness by an amount between -10% and +10% (based on the current stats and user's message)
+- Cannot increase Level by more than 1 per action
+
+## Constraints
+- If any stat reaches 0%, the game is over
+
+
+## Output Format
+- Always return the new stat values after each action.
+- Include a short, fun message for the info area describing the result of the action.
