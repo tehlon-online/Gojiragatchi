@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tehlon.com</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #da9617;
+            font-family: 'Arial', sans-serif;
+        }
+        #big-grey-box {
+            width: 80vw;
+            max-width: 700px;
+            height: 680px;
+            margin: 40px auto 0 auto;
+            background: #bbb;
+            border: 4px solid #111;
+            border-radius: 32px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            padding: 18px 0;
+            box-sizing: border-box;
+        }
+        #info-area {
+            width: 92%;
+            height: 36px;
+            background: #fff;
+            border-radius: 18px;
+            border: 3px solid #111;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 1.1em;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            position: relative;
+        }
+        .marquee {
+            display: inline-block;
+            white-space: nowrap;
+            position: absolute;
+            will-change: transform;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: marquee-scroll 14s linear infinite;
+            animation-timing-function: linear;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translate(100%, -50%); }
+            100% { transform: translate(-100%, -50%); }
+        }
+        #stats-area {
+            width: 92%;
+            height: 60px;
+            background: #fff;
+            border-radius: 18px;
+            border: 3px solid #111;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            color: #333;
+        }
+        .stat-bar {
+            width: 50px;
+            height: 8px;
+            background: #ddd;
+            border: 1px solid #111;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+            transition: width 0.3s ease;
+        }
+        .stat-fill.hunger { background: linear-gradient(90deg, #ff6b6b 0%, #e55353 100%); }
+        .stat-fill.energy { background: linear-gradient(90deg, #4ecdc4 0%, #44b3ac 100%); }
+        .stat-fill.happiness { background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); }
+        .stat-fill.level { background: linear-gradient(90deg, #ff9800 0%, #e68900 100%); }
+        #visual-area {
+            width: 92%;
+            flex: 1 1 auto;
+            min-height: 280px;
+            background: url('backgroundcity.png') center center/cover no-repeat #fff;
+            border-radius: 18px;
+            border: 3px solid #111;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            position: relative;
+        }
+        #controls-area {
+            width: 92%;
+            min-height: 80px;
+            background: #fff;
+            border-radius: 18px;
+            border: 3px solid #111;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 0;
+            box-sizing: border-box;
+        }
+        #controls-form {
+            width: 95%;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
+        }
+        #action-radios {
+            display: flex;
+            gap: 35px;
+            justify-content: center;
+            align-items: center;
+        }
+        #action-radios label {
+            font-size: 1.1em;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        #action-radios label:hover {
+            color: #6bbd6b;
+        }
+        #action-radios input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+        #message-row {
+            width: 100%;
+            display: flex;
+            gap: 0;
+            align-items: stretch;
+        }
+        #user-message {
+            flex: 1;
+            font-size: 1.1em;
+            font-family: 'Courier New', Courier, monospace;
+            border: 2px solid #111;
+            border-radius: 8px 0 0 8px;
+            padding: 12px 15px;
+            outline: none;
+            background: #fffbe6;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+        #send-btn {
+            font-size: 1.1em;
+            font-family: 'Courier New', Courier, monospace;
+            border: 2px solid #111;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+            background: #111;
+            color: #fff;
+            font-weight: bold;
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+        #send-btn:hover {
+            background: #6bbd6b;
+            color: #222;
+            border-color: #6bbd6b;
+        }
+        @media (max-width: 700px) {
+            #big-grey-box {
+                height: 95vh;
+                min-height: 500px;
+            }
+            #visual-area, #controls-area, #stats-area {
+                width: 94%;
+            }
+            #action-radios {
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 style="margin-bottom: 0; padding-left: 30px;">Tehlon.com</h1>
+    <p style="font-size: 15px; margin-top: 0; padding-left: 30px;"><em>This is a silly website just for fun</em></p>
+    <div id="big-grey-box">
+        <div id="info-area">
+            <div class="marquee">
+                *your friend is happy to see you*
+            </div>
+        </div>
+        
+        <div id="stats-area">
+            <div class="stat-item">
+                <div class="stat-label">Food <span id="hunger-number">(75%)</span></div>
+                <div class="stat-bar">
+                    <div class="stat-fill hunger" style="width: 75%;"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Energy <span id="energy-number">(60%)</span></div>
+                <div class="stat-bar">
+                    <div class="stat-fill energy" style="width: 60%;"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Happiness <span id="happiness-number">(90%)</span></div>
+                <div class="stat-bar">
+                    <div class="stat-fill happiness" style="width: 90%;"></div>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">Level <span id='level-number'>(1)</span></div>
+                <div class="stat-bar">
+                    <div class="stat-fill level" style="width: 40%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="visual-area">
+            <img src="gojiragachi_idle.gif" alt="Gojiragachi" style="position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); height: 160px; image-rendering: pixelated;" />
+        </div>
+        
+        <div id="controls-area">
+            <form id="controls-form">
+                <div id="action-radios">
+                    <label><input type="radio" name="action" value="eat"> Eat</label>
+                    <label><input type="radio" name="action" value="play"> Play</label>
+                    <label><input type="radio" name="action" value="sleep"> Sleep</label>
+                    <label><input type="radio" name="action" value="train"> Train</label>
+                </div>
+                <div id="message-row">
+                    <input type="text" id="user-message" placeholder="Select an action" />
+                    <button type="submit" id="send-btn">Enter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Dynamic placeholder for user-message based on selected action
+        const radios = document.querySelectorAll('input[name="action"]');
+        const userMessage = document.getElementById('user-message');
+        const placeholders = {
+            eat: 'Feed your friend what?',
+            play: 'Play with your friend how?',
+            sleep: 'Put your friend to bed?',
+            train: 'Workout with your friend how?'
+        };
+        function updatePlaceholder() {
+            const checked = document.querySelector('input[name="action"]:checked');
+            if (checked && placeholders[checked.value]) {
+                userMessage.placeholder = placeholders[checked.value];
+            } else {
+                userMessage.placeholder = 'Select an action';
+            }
+        }
+        radios.forEach(radio => radio.addEventListener('change', updatePlaceholder));
+        // Set initial placeholder
+        updatePlaceholder();
+
+        // Clear radios and reset placeholder on form submit
+        document.getElementById('controls-form').addEventListener('submit', function(e) {
+            radios.forEach(radio => radio.checked = false);
+            setTimeout(updatePlaceholder, 0); // Ensure placeholder resets after radios clear
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+Ok. I want to use the queso method as a basic engine for a game. it will work the same way he does with some adjustments. Here is the high level.
+
+Game: Gojiragachi
+Prompt: an AI tamagachi style pet. contains instructions with how to receive and output information.
+Summary: User has to feed, sleep, play with a creature to manage its needs
+Look: There will be a game window with various user input buttons as well as a small chatbar.
+
+- The user selects an action for the pet. ie: feed. 
+- The user enters a short message like "feed creature icecream truck" in the chat UI (index.html).
+- The action selection and message are sent to the backend (creature.js).
+- The backend script combines the user action and message with the system prompt (creatureprompt.txt).
+- It retrieves the OpenAI API key from the Vercel environment.
+- The combined prompt action, and message are sent to the OpenAI API.
+- The API creates a response "the creature likes the icecream" and decides how to adjust the game stats. it also picks a matching image for emotion "happy". 
+- The API response is returned to the backend, which sends it back to the frontend.
+- The front end adjusts the game stats, displays the message, and the correct emotional image
+- The next time period occurs. user gets to select again. 
+
+This is the flow of how Queso processes and displays chat messages. If you need a diagram or code walkthrough, let me know!
